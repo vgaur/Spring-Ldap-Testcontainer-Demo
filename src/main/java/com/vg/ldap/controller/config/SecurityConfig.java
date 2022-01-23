@@ -9,15 +9,18 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 
-@Configuration @EnableWebSecurity @EnableConfigurationProperties(LdapProperties.class)
+@Configuration
+@EnableWebSecurity
+@EnableConfigurationProperties(LdapProperties.class)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${ldap.userSearchBase}") private String userSearchBase;
-    @Value("${ldap.userSearchFilter}") private String userSearchFilter;
+    @Value("${ldap.userSearchBase}")
+    private String userSearchBase;
+
+    @Value("${ldap.userSearchFilter}")
+    private String userSearchFilter;
 
     private final LdapProperties ldapProperties;
 
@@ -25,21 +28,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.ldapProperties = ldapProperties;
     }
 
-    //    @Override protected void configure(HttpSecurity http) throws Exception {
-    //        http.authorizeRequests()
-    //            .antMatchers(HttpMethod.GET, "/private").authenticated()
-    //            .antMatchers(HttpMethod.GET, "/public").permitAll()
-    //            .anyRequest().authenticated().and().httpBasic();
-    //        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    //        http.cors().and().csrf().disable();
-    //
-    //
-    //    }
-
     @Override protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
+        http.authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/private").authenticated()
+            .antMatchers(HttpMethod.GET, "/public").permitAll()
+            .anyRequest().fullyAuthenticated()
+            .and().httpBasic();
         http.cors().and().csrf().disable();
+
+
     }
+    //
+    //    @Override protected void configure(HttpSecurity http) throws Exception {
+    //        http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
+    //        http.cors().and().csrf().disable();
+    //    }
 
     @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         String url = String.format("%s/%s", ldapProperties.getUrls()[0], ldapProperties.getBase());

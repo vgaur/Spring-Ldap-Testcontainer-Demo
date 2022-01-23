@@ -6,8 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.vg"})
-public class LdapApplication {
+public class LdapAuthApplication {
+
     public static void main(String[] args){
-        SpringApplication.run(LdapApplication.class, args);
+        SpringApplication.run(LdapAuthApplication.class, args);
     }
 }
